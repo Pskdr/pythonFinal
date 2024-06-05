@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import Toplevel
 
-def abrir_graficas():
+def abrir_ecuaciones_diferenciales():
     nueva_ventana = Toplevel()
     nueva_ventana.title("Gráficas")
     etiqueta = tk.Label(nueva_ventana, text="Gráficas")

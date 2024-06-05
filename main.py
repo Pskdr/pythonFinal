@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import Toplevel
 from metodo_de_taylor import abrir_metodo_de_taylor
-from interpolacion import abrir_interpolacion
-from graficas import abrir_graficas
+from sistemas_ecuaciones_lineales import abrri_sistemas_ecuaciones_lineales
+from ecuaciones_diferenciales import abrir_ecuaciones_diferenciales
 from ceros import abrir_ceros
-from integracion import abrir_integracion
+from interpolacion import abrir_interpolacion
 
 def abrir_ventana(titulo):
     nueva_ventana = Toplevel(root)
@@ -21,11 +21,11 @@ etiqueta_principal = tk.Label(root, text="Elija la ecuación que desea realizar:
 etiqueta_principal.pack(pady=10)
 
 botones = [
-    ("Método de Taylor", abrir_metodo_de_taylor),
-    ("Interpolación", abrir_interpolacion),
-    ("Gráficas", abrir_graficas),
-    ("Ceros", abrir_ceros),
-    ("Integración", abrir_integracion),
+    ("Serie de taylor", abrir_metodo_de_taylor),
+    ("Ceros de funciones", abrir_ceros),
+    ("Sistemas de Ecuaciones Lineales", abrri_sistemas_ecuaciones_lineales),
+    ("Interpolación y ajuste", abrir_interpolacion),
+    ("Ecuaciones diferenciales", abrir_ecuaciones_diferenciales),
 ]
 
 for (texto, funcion) in botones:
