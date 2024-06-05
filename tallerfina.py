@@ -9,8 +9,8 @@ def abrir_ventana(titulo):
     etiqueta.pack(padx=200, pady=200)
 
 root = tk.Tk()
-root.title("Menú Principal")
 root.anchor('center')
+root.title("Menú Principal")
 
 etiqueta_principal = tk.Label(root, text="Elija la ecuación que desea realizar:")
 etiqueta_principal.pack(pady=10)
@@ -19,6 +19,7 @@ botones = ["Método de Taylor", "Interpolación", "Gráficas", "Ceros", "Integra
 
 for boton in botones:
     b = tk.Button(root, text=boton, command=lambda t=boton: abrir_ventana(t))
-    b.pack(pady=5)
+    b.pack(pady=10)
+    b.pack(padx=100)
 
 root.mainloop()
