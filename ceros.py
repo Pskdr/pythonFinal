@@ -32,7 +32,6 @@ def abrir_ceros():
             
             label_resultado.config(text=f"Solución: {sol}")
 
-            # Graficar la función y la raíz encontrada
             x_vals = np.linspace(sol - 5, sol + 5, 400)
             y_vals = funcion_lambdified(x_vals)
             
@@ -55,7 +54,6 @@ def abrir_ceros():
 
     global entry_funcion, entry_a, entry_b, entry_x0, entry_x1, entry_exactitud, label_resultado, metodo_var
 
-    # Crear etiquetas y entradas
     label_funcion = tk.Label(nueva_ventana, text="Función en x (usar 'x' como variable):")
     label_funcion.grid(row=0, column=0, padx=5, pady=5, sticky='w')
     entry_funcion = tk.Entry(nueva_ventana, width=50)
