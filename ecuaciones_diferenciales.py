@@ -27,7 +27,6 @@ def runge_kutta(dy, x0, x_final, y0, h):
         y_values.append(y)
     return x_values, y_values
 
-# Función para abrir la ventana de ecuaciones diferenciales
 
 def abrir_ecuaciones_diferenciales():
     ventana_ed = tk.Toplevel()
