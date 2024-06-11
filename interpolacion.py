@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import sympy as sp
 
 
+# Funciones de Interpolación
+
 def polinomial_simple(x_data, y_data):
     n = len(x_data)
     M_p = np.zeros([n, n])
@@ -38,6 +40,9 @@ def minimos_cuadrados(xd, yd):
     a0 = (sf * sx2 - sx * sfx) / (n * sx2 - (sx) ** 2)
     a1 = (n * sfx - sf * sx) / (n * sx2 - (sx) ** 2)
     return a0, a1
+
+
+# Función para abrir la ventana de interpolación
 
 def abrir_interpolacion():
     ventana_interpolacion = tk.Toplevel()
@@ -77,17 +82,20 @@ def abrir_interpolacion():
                 polinomio = np.poly1d(coefs[::-1])
                 y_aprox = polinomio(x_val)
                 resultado = f"Polinomio: {polinomio}\nValor aproximado en x={x_val}: {y_aprox}"
+                plot_funcion(x_data, y_data, polinomio, metodo)
 
             elif metodo == "Lagrange":
                 polinomio = polinomio_lagrange(x_data, y_data)
                 y_aprox = polinomio.subs(sp.symbols('x'), x_val)
                 resultado = f"Polinomio: {polinomio}\nValor aproximado en x={x_val}: {y_aprox}"
+                plot_funcion(x_data, y_data, polinomio, metodo, lagrange=True)
 
             elif metodo == "Mínimos Cuadrados":
                 a0, a1 = minimos_cuadrados(x_data, y_data)
                 polinomio = lambda x: a0 + a1 * x
                 y_aprox = polinomio(x_val)
                 resultado = f"Polinomio: {a0} + {a1}*x\nValor aproximado en x={x_val}: {y_aprox}"
+                plot_funcion(x_data, y_data, polinomio, metodo)
 
             label_resultado.config(text=resultado)
         except Exception as e:
@@ -96,3 +104,16 @@ def abrir_interpolacion():
     tk.Button(ventana_interpolacion, text="Calcular", command=calcular_interpolacion).grid(row=4, columnspan=2, pady=10)
 
 
+def plot_funcion(x_data, y_data, polinomio, metodo, lagrange=False):
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x_data, y_data, label='Datos Originales', color='blue')
+    x_range = np.linspace(min(x_data), max(x_data), 100)
+    if lagrange:
+        polinomio_func = sp.lambdify(sp.symbols('x'), polinomio, 'numpy')
+        plt.plot(x_range, polinomio_func(x_range), label=metodo, color='red')
+    else:
+        plt.plot(x_range, polinomio(x_range), label=metodo, color='red')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.legend()
+    plt
