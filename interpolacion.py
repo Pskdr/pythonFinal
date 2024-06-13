@@ -4,9 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 
-
-# Funciones de Interpolación
-
 def polinomial_simple(x_data, y_data):
     n = len(x_data)
     M_p = np.zeros([n, n])
@@ -16,7 +13,6 @@ def polinomial_simple(x_data, y_data):
             M_p[i, j] = M_p[i, j - 1] * x_data[i]
     a_i = np.linalg.solve(M_p, y_data)
     return a_i
-
 
 def polinomio_lagrange(x_d, y_d):
     x = sp.symbols('x')
@@ -30,7 +26,6 @@ def polinomio_lagrange(x_d, y_d):
         S += pr * y_d[i]
     return S.expand()
 
-
 def minimos_cuadrados(xd, yd):
     n = len(xd)
     sx = sum(xd)
@@ -41,8 +36,40 @@ def minimos_cuadrados(xd, yd):
     a1 = (n * sfx - sf * sx) / (n * sx2 - (sx) ** 2)
     return a0, a1
 
+def graficar_interpolacion(x_data, y_data, metodo, x_val=None):
+    fig, ax = plt.subplots()
+    ax.scatter(x_data, y_data, label='Datos')
 
-# Función para abrir la ventana de interpolación
+    if metodo == "Polinomial Simple":
+        coefs = polinomial_simple(x_data, y_data)
+        polinomio = np.poly1d(coefs[::-1])
+        x_plot = np.linspace(min(x_data), max(x_data), 100)
+        y_plot = polinomio(x_plot)
+        ax.plot(x_plot, y_plot, label='Polinomio Simple')
+
+    elif metodo == "Lagrange":
+        polinomio = polinomio_lagrange(x_data, y_data)
+        x = sp.symbols('x')
+        x_plot = np.linspace(min(x_data), max(x_data), 100)
+        y_plot = [polinomio.subs(x, x_val) for x_val in x_plot]
+        ax.plot(x_plot, y_plot, label='Lagrange')
+
+    elif metodo == "Mínimos Cuadrados":
+        a0, a1 = minimos_cuadrados(x_data, y_data)
+        polinomio = lambda x: a0 + a1 * x
+        x_plot = np.linspace(min(x_data), max(x_data), 100)
+        y_plot = [polinomio(x) for x in x_plot]
+        ax.plot(x_plot, y_plot, label='Mínimos Cuadrados')
+
+    if x_val is not None:
+        y_aprox = polinomio(x_val)
+        ax.plot(x_val, y_aprox, 'ro', label=f'Punto aproximado ({x_val}, {y_aprox:.2f})')
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_title(f'Interpolación: {metodo}')
+    ax.legend()
+    plt.show()
 
 def abrir_interpolacion():
     ventana_interpolacion = tk.Toplevel()
@@ -82,38 +109,58 @@ def abrir_interpolacion():
                 polinomio = np.poly1d(coefs[::-1])
                 y_aprox = polinomio(x_val)
                 resultado = f"Polinomio: {polinomio}\nValor aproximado en x={x_val}: {y_aprox}"
-                plot_funcion(x_data, y_data, polinomio, metodo)
+
+                # Gráfica
+                plt.figure()
+                plt.scatter(x_data, y_data, label='Datos')
+                plt.plot(x_data, polinomio(x_data), label='Ajuste Polinomial')
+                plt.scatter(x_val, y_aprox, color='red', label=f'Aproximación en x={x_val}')
+                plt.legend()
+                plt.xlabel('X')
+                plt.ylabel('Y')
+                plt.title('Ajuste Polinomial')
+                plt.grid(True)
+                plt.show()
 
             elif metodo == "Lagrange":
                 polinomio = polinomio_lagrange(x_data, y_data)
                 y_aprox = polinomio.subs(sp.symbols('x'), x_val)
                 resultado = f"Polinomio: {polinomio}\nValor aproximado en x={x_val}: {y_aprox}"
-                plot_funcion(x_data, y_data, polinomio, metodo, lagrange=True)
+
+                # Gráfica
+                plt.figure()
+                plt.scatter(x_data, y_data, label='Datos')
+                x_graf = np.linspace(min(x_data), max(x_data), 100)
+                y_graf = [polinomio.subs(sp.symbols('x'), xx) for xx in x_graf]
+                plt.plot(x_graf, y_graf, label='Polinomio de Lagrange')
+                plt.scatter(x_val, y_aprox, color='red', label=f'Aproximación en x={x_val}')
+                plt.legend()
+                plt.xlabel('X')
+                plt.ylabel('Y')
+                plt.title('Polinomio de Lagrange')
+                plt.grid(True)
+                plt.show()
 
             elif metodo == "Mínimos Cuadrados":
                 a0, a1 = minimos_cuadrados(x_data, y_data)
                 polinomio = lambda x: a0 + a1 * x
                 y_aprox = polinomio(x_val)
                 resultado = f"Polinomio: {a0} + {a1}*x\nValor aproximado en x={x_val}: {y_aprox}"
-                plot_funcion(x_data, y_data, polinomio, metodo)
+
+                # Gráfica
+                plt.figure()
+                plt.scatter(x_data, y_data, label='Datos')
+                plt.plot(x_data, polinomio(x_data), label='Ajuste por Mínimos Cuadrados')
+                plt.scatter(x_val, y_aprox, color='red', label=f'Aproximación en x={x_val}')
+                plt.legend()
+                plt.xlabel('X')
+                plt.ylabel('Y')
+                plt.title('Ajuste por Mínimos Cuadrados')
+                plt.grid(True)
+                plt.show()
 
             label_resultado.config(text=resultado)
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
     tk.Button(ventana_interpolacion, text="Calcular", command=calcular_interpolacion).grid(row=4, columnspan=2, pady=10)
-
-
-def plot_funcion(x_data, y_data, polinomio, metodo, lagrange=False):
-    plt.figure(figsize=(10, 6))
-    plt.scatter(x_data, y_data, label='Datos Originales', color='blue')
-    x_range = np.linspace(min(x_data), max(x_data), 100)
-    if lagrange:
-        polinomio_func = sp.lambdify(sp.symbols('x'), polinomio, 'numpy')
-        plt.plot(x_range, polinomio_func(x_range), label=metodo, color='red')
-    else:
-        plt.plot(x_range, polinomio(x_range), label=metodo, color='red')
-    plt.xlabel('X')
-    plt.ylabel('Y')
-    plt.legend()
-    plt
